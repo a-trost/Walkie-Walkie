@@ -245,6 +245,20 @@ class App extends Component {
     }
   }
 
+  checkLogin() {
+    if (this.state.user) {
+    return(
+      <div>
+      <p>Signed in as {this.state.user.name}</p>
+      <button onClick={() => this.signOutTeacher()}>Sign Out</button>
+      </div>
+    )} else {
+      return(
+      <p>Choose a teacher to Continue</p>
+      )
+    }
+  }
+
   render() {
     return (
       <div className="App">
