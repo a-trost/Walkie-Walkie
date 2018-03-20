@@ -136,6 +136,33 @@ class App extends Component {
       teacherQueue: []
     };
   }
+
+  handleRequestSelection(request) {
+    let queue = this.state.teacherQueue.slice();
+    let itemIndex = queue.findIndex(item => item.user === this.state.user);
+    if (itemIndex < 0) {
+      let newItem = {
+        user:this.state.user,
+        bathroom:false,
+        nurse:false,
+        timestamp:Date(),
+      };
+      itemIndex=queue.length;
+      queue.push(newItem);
+    }
+    if (request === "Bathroom") {
+      queue[itemIndex].bathroom = !queue[itemIndex].bathroom;
+    } else if (request === "Nurse") {
+      queue[itemIndex].nurse = !queue[itemIndex].nurse;
+    }
+    if (queue[itemIndex].nurse===false && queue[itemIndex].bathroom===false){
+      queue.splice(itemIndex,1);
+    }
+    this.setState({
+      teacherQueue: queue
+    });
+  }
+
   handleTeacherSelection(i) {
     let user = teacherList.filter(user => user.name === i)[0];
     this.setState({ user: user });
