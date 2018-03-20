@@ -27,7 +27,6 @@ const teacherList = [
   { name: "Ryan", floor: 1 },
   { name: "Trost", floor: 2 },
   { name: "West", floor: 1 },
-
   { name: "Art", floor: 0 },
   { name: "Dance/Music", floor: 2 },
   { name: "Gym", floor: 0 },
@@ -105,7 +104,7 @@ class TeacherQueue extends Component {
           <ListGroupItem header="Heading 3" bsStyle="danger">
             Danger styling
           </ListGroupItem>
-        </ListGroup>;
+        </ListGroup>
         {/* {this.props.teacherQueue.map((teacher)=> <TeacherItem teacher={teacher}/>)} */}
       </div>
     );
@@ -166,6 +165,10 @@ class App extends Component {
     return <p>Hallway!</p>;
   }
 
+  signOutTeacher() {
+    this.setState({ user: null });
+  }
+
   renderTeacherView() {
     return (
       <div>
@@ -192,7 +195,7 @@ class App extends Component {
         </Grid>
 
         <p>Signed in as {this.state.user.name}</p>
-        <p>Sign Out</p>
+        <button onClick={() => this.signOutTeacher()}>Sign Out</button>
       </div>
     );
   }
@@ -219,13 +222,3 @@ function AppHeader() {
 
 export default App;
 
-//App Level
-// Option for Teacher, Office, Hallway (Choose Teacher)
-// For Hallway
-// Teacher List
-//Teacher (Button/Div) with remove feature
-// For Teacher
-// Buttons for Nurse and bathroom
-// For Office
-//Add Teacher
-// Remove Teacher
