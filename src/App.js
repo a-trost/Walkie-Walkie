@@ -91,6 +91,22 @@ function RequestButton(props) {
   );
 }
 
+
+function TeacherListItem(props) {
+  console.log(props)
+  return(
+            <ListGroupItem
+                header={props.item.user.name}
+                bsStyle={(props.item.nurse && props.item.bathroom)?'success':(props.item.nurse ?'danger' :'info')}
+                className="teacher-list-item"
+              >
+                2nd Floor → {(props.item.nurse && props.item.bathroom)?'Nurse & Bathroom':(props.item.nurse ?'Nurse' :'Bathroom')}
+              </ListGroupItem>
+  )
+}
+
+// danger = nurse, info=bathroom, success=both
+
 class TeacherQueue extends Component {
   render() {
     return (
