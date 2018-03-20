@@ -111,21 +111,6 @@ class TeacherQueue extends Component {
   }
 }
 
-class TeacherItem extends Component {
-  render() {
-    return (
-      <div className="teacher-item">
-        <a className="remove-player" onClick={this.props.onRemove}>
-          ✖
-        </a>
-        {this.props.teacher}
-        <i className="fas fa-medkit" />
-        <i className="fas fa-female" />
-      </div>
-    );
-  }
-}
-
 class App extends Component {
   constructor(props) {
     super(props);
