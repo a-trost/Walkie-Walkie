@@ -225,6 +225,25 @@ class App extends Component {
   }
 
   renderTeacherView() {
+    let bathroomStyle = 'primary';
+    let nurseStyle = 'danger';
+    let bathroomIcon = bathroomSvg;
+    let nurseIcon = nurseSvg;
+    let placeInLine;
+    let queue = this.state.teacherQueue.slice();  
+    let itemIndex= queue.findIndex(item => item.user === this.state.user);  
+    if (itemIndex>=0) {
+      if (queue[itemIndex].nurse) {
+        nurseStyle='success';
+        nurseIcon=checkSvg;
+      }
+      if (queue[itemIndex].bathroom) {
+        bathroomStyle='success';
+        bathroomIcon=checkSvg;
+      }
+      placeInLine = itemIndex===1 ? "You have 1 class ahead of you" : "You have " + itemIndex + " classes ahead of you";
+    }
+
     return (
       <div>
         <h2>Request for {this.state.user.name}</h2>
@@ -232,6 +251,7 @@ class App extends Component {
           <Row className="show-grid">
             <Col key={0} xs={6}>
               <RequestButton
+                onClick={() => this.handleRequestSelection("Bathroom")}
                 text="Bathroom"
                 icon={bathroom}
                 style="success"
@@ -247,6 +267,7 @@ class App extends Component {
               />
             </Col>
           </Row>
+          <h3>{placeInLine}</h3>
         </Grid>
         <p>Signed in as {this.state.user.name}</p>
         <button onClick={() => this.signOutTeacher()}>Sign Out</button>
