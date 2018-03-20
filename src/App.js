@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import {
+  Badge,
   Button,
   Grid,
   Row,
@@ -9,8 +10,11 @@ import {
 } from "react-bootstrap";
 import "./App.css";
 import "./Button.css";
-import nurse from "./nurse.svg";
-import bathroom from "./bathroom.svg";
+import "./TeacherQueue.css";
+import nurseSvg from "./nurse.svg";
+import bathroomSvg from "./bathroom.svg";
+import checkSvg from "./check.svg";
+
 const teacherList = [
   { name: "Angeli", floor: 1 },
   { name: "Berrie", floor: 2 },
@@ -34,7 +38,7 @@ const teacherList = [
   { name: "Spanish", floor: 0 },
   { name: "Nurse", floor: 0 },
   { name: "Office", floor: 1 },
-  { name: "Hallway Monitor", floor: 2 }
+  { name: "Hallway", floor: 2 }
 ];
 
 function ChooseTeacherButton(props) {
@@ -79,9 +83,9 @@ class ChooseTeacher extends Component {
 function RequestButton(props) {
   return (
     <Button
+      onClick={props.onClick}
       bsStyle={props.style}
       className="request-btn"
-      // onClick={props.onClick}
       key={props.index}
       block
     >
@@ -91,33 +95,46 @@ function RequestButton(props) {
   );
 }
 
-
 function TeacherListItem(props) {
   let floor;
   let destination;
-  switch(props.item.user.floor) {
+  switch (props.item.user.floor) {
     case 0:
-      floor="Basement";
+      floor = "Basement";
       break;
-      case 1:
-      floor="1st Floor";
+    case 1:
+      floor = "1st Floor";
       break;
-      case 2:
-      floor="2nd Floor";
+    case 2:
+      floor = "2nd Floor";
       break;
-      case 3:
-      floor="3rd Floor";
+    case 3:
+      floor = "3rd Floor";
       break;
   }
-  if (props.item.nurse && props.item.bathroom) {destination='Nurse & Bathroom'} else if (props.item.nurse) {destination='Nurse'} else {destination='Bathroom'};
-  return(
-            <ListGroupItem
-                header={props.item.user.name}
-                bsStyle={(props.item.nurse && props.item.bathroom)?'success':(props.item.nurse ?'danger' :'info')}
-                className="teacher-list-item"
-              >{floor} → {destination}
-              </ListGroupItem>
-  )
+  if (props.item.nurse && props.item.bathroom) {
+    destination = "Nurse & Bathroom";
+  } else if (props.item.nurse) {
+    destination = "Nurse";
+  } else {
+    destination = "Bathroom";
+  }
+  return (
+    <ListGroupItem
+      header={props.item.user.name}
+      bsStyle={
+        props.item.nurse && props.item.bathroom
+          ? "success"
+          : props.item.nurse ? "danger" : "info"
+      }
+      className="teacher-list-item"
+    >
+      {floor} → {destination}{" "}
+      <span onClick={props.onClick} className="remove-list-item">
+        X
+      </span>
+    </ListGroupItem>
+  );
 }
 
 // danger = nurse, info=bathroom, success=both
@@ -126,17 +143,23 @@ class TeacherQueue extends Component {
   render() {
     return (
       <div className="teacher-queue">
-        <h2>Teacher Queue</h2>
-        <ListGroup>
-          <ListGroupItem header="Heading 1">Some body text</ListGroupItem>
-          <ListGroupItem header="Heading 2" href="#">
-            Linked item
-          </ListGroupItem>
-          <ListGroupItem header="Heading 3" bsStyle="danger">
-            Danger styling
-          </ListGroupItem>
-        </ListGroup>
-        {/* {this.props.teacherQueue.map((teacher)=> <TeacherItem teacher={teacher}/>)} */}
+        <h2>
+          Teacher Queue <Badge>{this.props.teacherQueue.length}</Badge>
+        </h2>
+        <Grid>
+          <Row className="show-grid">
+            <ListGroup>
+              {this.props.teacherQueue.map((item, index) => (
+                <TeacherListItem
+                  onClick={() => this.props.removeRequest(index)}
+                  index={index}
+                  item={item}
+                  key={index}
+                />
+              ))}
+            </ListGroup>
+          </Row>
+        </Grid>
       </div>
     );
   }
@@ -146,6 +169,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.handleTeacherSelection = this.handleTeacherSelection.bind(this);
+    this.removeRequest = this.removeRequest.bind(this);
+
     this.state = {
       user: null,
       teacherQueue: []
@@ -157,12 +182,12 @@ class App extends Component {
     let itemIndex = queue.findIndex(item => item.user === this.state.user);
     if (itemIndex < 0) {
       let newItem = {
-        user:this.state.user,
-        bathroom:false,
-        nurse:false,
-        timestamp:Date(),
+        user: this.state.user,
+        bathroom: false,
+        nurse: false,
+        timestamp: Date()
       };
-      itemIndex=queue.length;
+      itemIndex = queue.length;
       queue.push(newItem);
     }
     if (request === "Bathroom") {
@@ -170,8 +195,8 @@ class App extends Component {
     } else if (request === "Nurse") {
       queue[itemIndex].nurse = !queue[itemIndex].nurse;
     }
-    if (queue[itemIndex].nurse===false && queue[itemIndex].bathroom===false){
-      queue.splice(itemIndex,1);
+    if (!queue[itemIndex].nurse && !queue[itemIndex].bathroom) {
+      queue.splice(itemIndex, 1);
     }
     this.setState({
       teacherQueue: queue
@@ -188,7 +213,7 @@ class App extends Component {
     if (this.state.user) {
       if (this.state.user.name === "Office") {
         return this.renderOfficeView();
-      } else if (this.state.user.name === "Hallway Monitor") {
+      } else if (this.state.user.name === "Hallway") {
         return this.renderHallwayView();
       } else {
         return this.renderTeacherView();
@@ -202,19 +227,32 @@ class App extends Component {
     return <ChooseTeacher handleClick={this.handleTeacherSelection} />;
   }
 
+  removeRequest(index) {
+    console.log(index);
+    let queue = this.state.teacherQueue.slice();
+    queue.splice(index, 1);
+    this.setState({
+      teacherQueue: queue
+    });
+    console.log("This ran");
+  }
+
   renderOfficeView() {
     return (
       <div>
-        <p>Signed in as {this.state.user.name}</p>
-        <button onClick={() => this.signOutTeacher()}>Sign Out</button>
+        <TeacherQueue
+          removeRequest={this.removeRequest}
+          teacherQueue={this.state.teacherQueue}
+        />
       </div>
     );
   }
   renderHallwayView() {
     return (
       <div>
-        <p>Signed in as {this.state.user.name}</p>
-        <button onClick={() => this.signOutTeacher()}>Sign Out</button>
+        <TeacherQueue 
+          removeRequest={this.removeRequest}
+          teacherQueue={this.state.teacherQueue} />
       </div>
     );
   }
@@ -225,23 +263,26 @@ class App extends Component {
   }
 
   renderTeacherView() {
-    let bathroomStyle = 'primary';
-    let nurseStyle = 'danger';
+    let bathroomStyle = "primary";
+    let nurseStyle = "danger";
     let bathroomIcon = bathroomSvg;
     let nurseIcon = nurseSvg;
     let placeInLine;
-    let queue = this.state.teacherQueue.slice();  
-    let itemIndex= queue.findIndex(item => item.user === this.state.user);  
-    if (itemIndex>=0) {
+    let queue = this.state.teacherQueue.slice();
+    let itemIndex = queue.findIndex(item => item.user === this.state.user);
+    if (itemIndex >= 0) {
       if (queue[itemIndex].nurse) {
-        nurseStyle='success';
-        nurseIcon=checkSvg;
+        nurseStyle = "success";
+        nurseIcon = checkSvg;
       }
       if (queue[itemIndex].bathroom) {
-        bathroomStyle='success';
-        bathroomIcon=checkSvg;
+        bathroomStyle = "success";
+        bathroomIcon = checkSvg;
       }
-      placeInLine = itemIndex===1 ? "You have 1 class ahead of you" : "You have " + itemIndex + " classes ahead of you";
+      placeInLine =
+        itemIndex === 1
+          ? "You have 1 class ahead of you"
+          : "You have " + itemIndex + " classes ahead of you";
     }
 
     return (
@@ -253,24 +294,23 @@ class App extends Component {
               <RequestButton
                 onClick={() => this.handleRequestSelection("Bathroom")}
                 text="Bathroom"
-                icon={bathroom}
-                style="success"
+                icon={bathroomIcon}
+                style={bathroomStyle}
                 key={0}
               />
             </Col>
             <Col key={1} xs={6}>
               <RequestButton
+                onClick={() => this.handleRequestSelection("Nurse")}
                 text="Nurse"
-                icon={nurse}
-                style="primary"
+                icon={nurseIcon}
+                style={nurseStyle}
                 key={1}
               />
             </Col>
           </Row>
           <h3>{placeInLine}</h3>
         </Grid>
-        <p>Signed in as {this.state.user.name}</p>
-        <button onClick={() => this.signOutTeacher()}>Sign Out</button>
       </div>
     );
   }
@@ -283,15 +323,20 @@ class App extends Component {
 
   checkLogin() {
     if (this.state.user) {
-    return(
-      <div>
-      <p>Signed in as {this.state.user.name}</p>
-      <button onClick={() => this.signOutTeacher()}>Sign Out</button>
-      </div>
-    )} else {
-      return(
-      <p>Choose a teacher to Continue</p>
-      )
+      return (
+        <div>
+          <p>Signed in as {this.state.user.name}</p>
+          <Button
+            bsStyle="primary"
+            bsSize="small"
+            onClick={() => this.signOutTeacher()}
+          >
+            Sign Out
+          </Button>
+        </div>
+      );
+    } else {
+      return <p>Choose a Teacher to Continue</p>;
     }
   }
 
@@ -300,7 +345,7 @@ class App extends Component {
       <div className="App">
         <AppHeader />
         {this.determineView()}
-        <TeacherQueue />
+        {this.checkLogin()}
       </div>
     );
   }
@@ -309,9 +354,12 @@ class App extends Component {
 function AppHeader() {
   return (
     <header className="App-header">
-      <h1 className="App-title">Hallway Requests</h1>
+      <h1 className="App-title">Office, Come In</h1>
     </header>
   );
 }
 
 export default App;
+
+// TODO: Add "remove" button for teacher queue view
+// TODO: Have the teacher view refresh on Hallway's deletion of the list object
