@@ -93,14 +93,29 @@ function RequestButton(props) {
 
 
 function TeacherListItem(props) {
-  console.log(props)
+  let floor;
+  let destination;
+  switch(props.item.user.floor) {
+    case 0:
+      floor="Basement";
+      break;
+      case 1:
+      floor="1st Floor";
+      break;
+      case 2:
+      floor="2nd Floor";
+      break;
+      case 3:
+      floor="3rd Floor";
+      break;
+  }
+  if (props.item.nurse && props.item.bathroom) {destination='Nurse & Bathroom'} else if (props.item.nurse) {destination='Nurse'} else {destination='Bathroom'};
   return(
             <ListGroupItem
                 header={props.item.user.name}
                 bsStyle={(props.item.nurse && props.item.bathroom)?'success':(props.item.nurse ?'danger' :'info')}
                 className="teacher-list-item"
-              >
-                2nd Floor → {(props.item.nurse && props.item.bathroom)?'Nurse & Bathroom':(props.item.nurse ?'Nurse' :'Bathroom')}
+              >{floor} → {destination}
               </ListGroupItem>
   )
 }
