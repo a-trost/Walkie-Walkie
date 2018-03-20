@@ -12,7 +12,7 @@ import "./Button.css";
 import nurse from "./nurse.svg";
 import bathroom from "./bathroom.svg";
 const teacherList = [
-  { name: "Angeli", floor: 1 },  
+  { name: "Angeli", floor: 1 },
   { name: "Berrie", floor: 2 },
   { name: "Cyphers", floor: 1 },
   { name: "DelBene", floor: 1 },
@@ -138,6 +138,7 @@ class App extends Component {
   handleTeacherSelection(i) {
     let user = teacherList.filter(user => user.name === i)[0];
     this.setState({ user: user });
+    localStorage.setItem("user", JSON.stringify(user));
   }
 
   determineView() {
@@ -159,14 +160,25 @@ class App extends Component {
   }
 
   renderOfficeView() {
-    return <p>Office!</p>;
+    return (
+      <div>
+        <p>Signed in as {this.state.user.name}</p>
+        <button onClick={() => this.signOutTeacher()}>Sign Out</button>
+      </div>
+    );
   }
   renderHallwayView() {
-    return <p>Hallway!</p>;
+    return (
+      <div>
+        <p>Signed in as {this.state.user.name}</p>
+        <button onClick={() => this.signOutTeacher()}>Sign Out</button>
+      </div>
+    );
   }
 
   signOutTeacher() {
     this.setState({ user: null });
+    localStorage.setItem("user", JSON.stringify(""));
   }
 
   renderTeacherView() {
@@ -193,13 +205,17 @@ class App extends Component {
             </Col>
           </Row>
         </Grid>
-
         <p>Signed in as {this.state.user.name}</p>
         <button onClick={() => this.signOutTeacher()}>Sign Out</button>
       </div>
     );
   }
-  // Needs to clear out local storage and bring up the renderChooseTeacher() component
+
+  componentDidMount() {
+    if (JSON.parse(localStorage.getItem("user"))) {
+      this.setState({ user: JSON.parse(localStorage.getItem("user")) });
+    }
+  }
 
   render() {
     return (
@@ -221,4 +237,3 @@ function AppHeader() {
 }
 
 export default App;
-
