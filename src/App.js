@@ -16,6 +16,8 @@ import "./TeacherQueue.css";
 import nurseSvg from "./nurse.svg";
 import bathroomSvg from "./bathroom.svg";
 import checkSvg from "./check.svg";
+import 'firebase/firestore';
+require("firebase/firestore");
 
 const teacherList = [
   { name: "Angeli", floor: 1 },
