@@ -8,6 +8,8 @@ import {
   ListGroup,
   ListGroupItem
 } from "react-bootstrap";
+import moment from "moment";
+import { db } from './fire.js';
 import "./App.css";
 import "./Button.css";
 import "./TeacherQueue.css";
@@ -186,7 +188,7 @@ class App extends Component {
         user: this.state.user,
         bathroom: false,
         nurse: false,
-        timestamp: Date()
+        timestamp: moment()
       };
       itemIndex = queue.length;
       queue.push(newItem);
