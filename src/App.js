@@ -84,7 +84,7 @@ function RequestButton(props) {
   return (
     <Button
       onClick={props.onClick}
-      bsStyle={props.style}
+      bsStyle={props.buttonStyle}
       className="request-btn"
       key={props.index}
       block
@@ -111,6 +111,7 @@ function TeacherListItem(props) {
     case 3:
       floor = "3rd Floor";
       break;
+      default:
   }
   if (props.item.nurse && props.item.bathroom) {
     destination = "Nurse & Bathroom";
@@ -295,7 +296,7 @@ class App extends Component {
                 onClick={() => this.handleRequestSelection("Bathroom")}
                 text="Bathroom"
                 icon={bathroomIcon}
-                style={bathroomStyle}
+                buttonStyle={bathroomStyle}
                 key={0}
               />
             </Col>
@@ -304,7 +305,7 @@ class App extends Component {
                 onClick={() => this.handleRequestSelection("Nurse")}
                 text="Nurse"
                 icon={nurseIcon}
-                style={nurseStyle}
+                buttonStyle={nurseStyle}
                 key={1}
               />
             </Col>
@@ -361,5 +362,4 @@ function AppHeader() {
 
 export default App;
 
-// TODO: Add "remove" button for teacher queue view
 // TODO: Have the teacher view refresh on Hallway's deletion of the list object
