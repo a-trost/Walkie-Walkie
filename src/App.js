@@ -212,9 +212,7 @@ class App extends Component {
 
   determineView() {
     if (this.state.user) {
-      if (this.state.user.name === "Office") {
-        return this.renderOfficeView();
-      } else if (this.state.user.name === "Hallway") {
+      if (this.state.user.name === "Hallway") {
         return this.renderHallwayView();
       } else {
         return this.renderTeacherView();
