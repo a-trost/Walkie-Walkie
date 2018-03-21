@@ -253,7 +253,8 @@ class App extends Component {
       <div>
         <TeacherQueue 
           removeRequest={this.removeRequest}
-          teacherQueue={this.state.teacherQueue} />
+          teacherQueue={this.state.teacherQueue}
+        />
       </div>
     );
   }
