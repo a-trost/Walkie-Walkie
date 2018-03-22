@@ -358,7 +358,7 @@ class App extends Component {
 function AppHeader() {
   return (
     <header className="App-header">
-      <h1 className="App-title">Office, Come In</h1>
+      <img src={logo} alt="Walkie Walkie" className="App-header-logo" />
     </header>
   );
 }
