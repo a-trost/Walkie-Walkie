@@ -16,34 +16,16 @@ import "./TeacherQueue.css";
 import nurseSvg from "./nurse.svg";
 import bathroomSvg from "./bathroom.svg";
 import checkSvg from "./check.svg";
+import logo from "./logo.png";
 import 'firebase/firestore';
 require("firebase/firestore");
 
-const teacherList = [
-  { name: "Angeli", floor: "1st Floor" },
-  { name: "Berrie", floor: "2nd Floor" },
-  { name: "Cyphers", floor: "1st Floor" },
-  { name: "DelBene", floor: "1st Floor" },
-  { name: "Garrett", floor: "3rd Floor" },
-  { name: "Graham", floor: "1st Floor" },
-  { name: "Hulsart", floor: "1st Floor" },
-  { name: "Hickmon", floor: "2nd Floor" },
-  { name: "McPherson", floor: "2nd Floor" },
-  { name: "Palermo", floor: "1st Floor" },
-  { name: "Pouliovalis", floor: "1st Floor" },
-  { name: "Psaradellis", floor: "3rd Floor" },
-  { name: "Ryan", floor: "1st Floor" },
-  { name: "Trost", floor: "2nd Floor" },
-  { name: "West", floor: "1st Floor" },
-  { name: "Art", floor: "Basement" },
-  { name: "Auditorium", floor: "2nd Floor" },
-  { name: "Gym", floor: "Basement" },
-  { name: "Science", floor: "3rd Floor" },
-  { name: "Spanish", floor: "Basement" },
-  { name: "Nurse", floor: "Basement" },
-  { name: "Office", floor: "1st Floor" },
-  { name: "Hallway", floor: "2nd Floor" }
-];
+const destinationList = [
+  { name: "Nurse", icon: "nurseSvg", style: "danger" },
+  { name: "Bathroom", icon: "bathroomSvg", style: "primary" },
+]
+
+// const teacherList = [];
 
 function ChooseTeacherButton(props) {
   return (
@@ -60,13 +42,13 @@ function ChooseTeacherButton(props) {
 }
 
 class ChooseTeacher extends Component {
-  render() {
+  render() {    
     return (
       <div>
         <h2>Select Your Classroom</h2>
         <Grid>
           <Row className="show-grid">
-            {teacherList.map((teacher, index) => (
+            {this.props.teacherList.map((teacher, index) => (
               <Col key={index} xs={6} sm={4} lg={3}>
                 <ChooseTeacherButton
                   name={teacher.name}
@@ -100,23 +82,7 @@ function RequestButton(props) {
 }
 
 function TeacherListItem(props) {
-  let floor;
-  let destination;
-  switch (props.item.user.floor) {
-    case 0:
-      floor = "Basement";
-      break;
-    case 1:
-      floor = "1st Floor";
-      break;
-    case 2:
-      floor = "2nd Floor";
-      break;
-    case 3:
-      floor = "3rd Floor";
-      break;
-      default:
-  }
+  let destination; 
   if (props.item.nurse && props.item.bathroom) {
     destination = "Nurse & Bathroom";
   } else if (props.item.nurse) {
@@ -134,7 +100,7 @@ function TeacherListItem(props) {
       }
       className="teacher-list-item"
     >
-      {floor} → {destination}{" "}
+      {props.item.user.floor} → {destination}{" "}{moment(props.item.timestamp).fromNow()}
       <span onClick={props.onClick} className="remove-list-item">
         X
       </span>
@@ -149,7 +115,7 @@ class TeacherQueue extends Component {
     return (
       <div className="teacher-queue">
         <h2>
-          Teacher Queue <Badge>{this.props.teacherQueue.length}</Badge>
+          Request Queue <Badge>{this.props.teacherQueue.length}</Badge>
         </h2>
         <Grid>
           <Row className="show-grid">
@@ -175,12 +141,36 @@ class App extends Component {
     super(props);
     this.handleTeacherSelection = this.handleTeacherSelection.bind(this);
     this.removeRequest = this.removeRequest.bind(this);
-
     this.state = {
       user: null,
-      teacherQueue: []
+      teacherList: [],
+      teacherQueue: [],
+
     };
   }
+
+  initalizeRooms() {
+    this.state.teacherList.forEach((room, index) => {
+    db.collection("rooms").doc(room.name).set({name: room.name, floor: room.floor, id:index , color: room.color}).then(function() {
+      console.log("Room successfully written!");
+  })
+  .catch(function(error) {
+      console.error("Error writing room: ", error);
+  });
+  })
+  }
+
+  initalizeDestinations() {
+    destinationList.forEach((destination, index) => {
+      db.collection("destinations").doc(destination.name).set({name: destination.name, icon: destination.icon,  style:destination.style }).then(function() {
+        console.log("Destination successfully written!");
+    })
+    .catch(function(error) {
+        console.error("Error writing destination: ", error);
+    });
+    })
+    }
+
 
   handleRequestSelection(request) {
     let queue = this.state.teacherQueue.slice();
@@ -209,7 +199,7 @@ class App extends Component {
   }
 
   handleTeacherSelection(i) {
-    let user = teacherList.filter(user => user.name === i)[0];
+    let user = this.state.teacherList.filter(user => user.name === i)[0];
     this.setState({ user: user });
     localStorage.setItem("user", JSON.stringify(user));
   }
@@ -227,7 +217,7 @@ class App extends Component {
   }
 
   renderChooseTeacher() {
-    return <ChooseTeacher handleClick={this.handleTeacherSelection} />;
+    return <ChooseTeacher handleClick={this.handleTeacherSelection} teacherList={this.state.teacherList} />;
   }
 
   removeRequest(index) {
@@ -237,7 +227,6 @@ class App extends Component {
     this.setState({
       teacherQueue: queue
     });
-    console.log("This ran");
   }
 
   renderOfficeView() {
@@ -253,7 +242,7 @@ class App extends Component {
   renderHallwayView() {
     return (
       <div>
-        <TeacherQueue 
+        <TeacherQueue
           removeRequest={this.removeRequest}
           teacherQueue={this.state.teacherQueue}
         />
@@ -323,6 +312,20 @@ class App extends Component {
     if (JSON.parse(localStorage.getItem("user"))) {
       this.setState({ user: JSON.parse(localStorage.getItem("user")) });
     }
+      var self = this;
+      let list = [];
+      db.collection("rooms").get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+            // doc.data() is never undefined for query doc snapshots
+            list.push(doc.data());
+            // console.log(doc.id, " => ", doc.data());
+            self.setState({
+              teacherList: list,
+            });
+        });
+      })
+      
+    
   }
 
   checkLogin() {
@@ -365,4 +368,17 @@ function AppHeader() {
 
 export default App;
 
+
+// TODO: Lock down app for users only
+// TODO: Add buttons for office to make those requests
+// TODO: Add more request types: Pick up kid, deliver papers, come to office, blank field alert
+// TODO: Change request item to more generic format
+// TODO: Make new list components
+// TODO: Change Hallway's button color to distinguish it
+// TODO: Refactor functions into individual files
+// TODO: Refactor css into individual files
+// TODO: Make list go to firebase database
+// TODO: Add Undo feature
+// TODO: Add chime to play on Hallway view when new teacher object appears
+// TODO: Make changes update live, including addition/deletion/time changes
 // TODO: Have the teacher view refresh on Hallway's deletion of the list object
