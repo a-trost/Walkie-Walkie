@@ -18,5 +18,9 @@
   },
   "devDependencies": {
     "prettier": "1.11.1"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/a-trost/hallway.git",
+  "author": "Alexander Trost <AlexRTrost@gmail.com>",
+  "license": "MIT"
 }
