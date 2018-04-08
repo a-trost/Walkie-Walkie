@@ -13,11 +13,11 @@ import RequestQueue from "./RequestQueue.js";
 
 import "./App.css";
 import "./Button.css";
-import "./TeacherQueue.css";
-import nurseSvg from "./nurse.svg";
-import bathroomSvg from "./bathroom.svg";
-import checkSvg from "./check.svg";
-import logo from "./logo.png";
+import "./RequestQueue.css";
+import nurseSvg from "./images/nurse.svg";
+import bathroomSvg from "./images/bathroom.svg";
+import checkSvg from "./images/check.svg";
+import logo from "./images/logo.png";
 import 'firebase/firestore';
 require("firebase/firestore");
 
