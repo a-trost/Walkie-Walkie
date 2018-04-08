@@ -1,15 +1,16 @@
 import React, { Component } from "react";
 import {
-  Badge,
   Button,
   Grid,
   Row,
   Col,
-  ListGroup,
-  ListGroupItem
 } from "react-bootstrap";
 import moment from "moment";
 import { db } from './fire.js';
+import RequestButton from "./RequestButton.js";
+import ChooseTeacher from "./ChooseTeacher.js";
+import RequestQueue from "./RequestQueue.js";
+
 import "./App.css";
 import "./Button.css";
 import "./TeacherQueue.css";
@@ -32,19 +33,6 @@ const destinationList = [
 
 // const teacherList = [];
 
-function ChooseTeacherButton(props) {
-  return (
-    <Button
-      bsStyle="danger"
-      onClick={props.onClick}
-      key={props.index}
-      name={props.name}
-      block
-    >
-      {props.name}
-    </Button>
-  );
-}
 
 class ChooseTeacher extends Component {
   render() {    
@@ -115,31 +103,6 @@ function TeacherListItem(props) {
 
 // danger = nurse, info=bathroom, success=both
 
-class TeacherQueue extends Component {
-  render() {
-    return (
-      <div className="teacher-queue">
-        <h2>
-          Request Queue <Badge>{this.props.teacherQueue.length}</Badge>
-        </h2>
-        <Grid>
-          <Row className="show-grid">
-            <ListGroup>
-              {this.props.teacherQueue.map((item, index) => (
-                <TeacherListItem
-                  onClick={() => this.props.removeRequest(index)}
-                  index={index}
-                  item={item}
-                  key={index}
-                />
-              ))}
-            </ListGroup>
-          </Row>
-        </Grid>
-      </div>
-    );
-  }
-}
 
 class App extends Component {
   constructor(props) {
