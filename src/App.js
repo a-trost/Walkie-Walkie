@@ -23,6 +23,11 @@ require("firebase/firestore");
 const destinationList = [
   { name: "Nurse", icon: "nurseSvg", style: "danger" },
   { name: "Bathroom", icon: "bathroomSvg", style: "primary" },
+  { name: "BathroomNurse", icon: "bathroomNurseSvg", style: "primary" },  
+  { name: "PickUp", icon: "pickupSvg", style: "success" },
+  { name: "Paper", icon: "paperSvg", style: "info" },
+  { name: "Office", icon: "officeSvg", style: "warning" },
+  { name: "Custom", icon: "customSvg", style: "" },
 ]
 
 // const teacherList = [];
