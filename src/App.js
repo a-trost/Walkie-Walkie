@@ -10,6 +10,7 @@ import { db } from './fire.js';
 import RequestButton from "./RequestButton.js";
 import ChooseTeacher from "./ChooseTeacher.js";
 import RequestQueue from "./RequestQueue.js";
+import AppHeader from "./AppHeader.js";
 
 import "./App.css";
 import "./Button.css";
@@ -17,7 +18,6 @@ import "./RequestQueue.css";
 import nurseSvg from "./images/nurse.svg";
 import bathroomSvg from "./images/bathroom.svg";
 import checkSvg from "./images/check.svg";
-import logo from "./images/logo.png";
 import 'firebase/firestore';
 require("firebase/firestore");
 
@@ -260,13 +260,7 @@ class App extends Component {
   }
 }
 
-function AppHeader() {
-  return (
-    <header className="App-header">
-      <img src={logo} alt="Walkie Walkie" className="App-header-logo" />
-    </header>
-  );
-}
+
 
 export default App;
 
